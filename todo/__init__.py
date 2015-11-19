@@ -6,7 +6,11 @@ from circuits.web import Server, JSONController
 
 class Root(JSONController):
 
+    def _set_CORS(self):
+        self.response.headers["Access-Control-Allow-Origin"] = "*"
+
     def index(self):
+        self._set_CORS()
         return {"success": True}
 
 
