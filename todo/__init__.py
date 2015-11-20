@@ -20,19 +20,24 @@ def json_parser(f):
     return wrapper
 
 
+def cors(f):
+    def wrapper(self, *args, **kwargs):
+        self.response.headers.update(CORS_HEADERS)
+        return f(self, *args, **kwargs)
+    return wrapper
+
+
 class Root(JSONController):
 
-    def _set_CORS(self):
-        self.response.headers.update(CORS_HEADERS)
-
+    @cors
     def index(self):
-        self._set_CORS()
         return []
 
+    @cors
     def OPTIONS(self):
         self.response.headers['Allow'] = METHODS
-        self._set_CORS()
 
+    @cors
     @json_parser
     def POST(self):
         return self.request.body
