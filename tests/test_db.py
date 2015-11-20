@@ -78,9 +78,22 @@ class DatabaseOperationsTestCase(unittest.TestCase):
         persisted_todo2 = self.db.create(self.example_todo)
 
         # when
-        self.db.delete_all()
+        self.db.delete()
         all_todos = self.db.get_all()
 
         # then
         self.assertNotIn(persisted_todo1, all_todos)
         self.assertNotIn(persisted_todo2, all_todos)
+
+    def test_delete_by_url(self):
+        # given
+        persisted_todo1 = self.db.create(self.example_todo)
+        persisted_todo2 = self.db.create(self.example_todo)
+
+        # when
+        self.db.delete(persisted_todo1['url'])
+        all_todos = self.db.get_all()
+
+        # then
+        self.assertNotIn(persisted_todo1, all_todos)
+        self.assertIn(persisted_todo2, all_todos)

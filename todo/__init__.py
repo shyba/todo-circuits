@@ -56,8 +56,12 @@ class Root(JSONController):
         return db.patch(url, self.request.body)
 
     @cors
-    def DELETE(self):
-        db.delete_all()
+    def DELETE(self, *args, **kwargs):
+        if not args:
+            db.delete()
+        else:
+            host = self.request.uri.relative('/').unicode()
+            db.delete(host + args[0])
         return []
 
 

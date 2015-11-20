@@ -20,8 +20,11 @@ def get_all():
     return list(DATABASE.values())
 
 
-def delete_all():
-    DATABASE.clear()
+def delete(url=None):
+    if not url:
+        DATABASE.clear()
+    else:
+        del DATABASE[url]
 
 
 def update(todo):
