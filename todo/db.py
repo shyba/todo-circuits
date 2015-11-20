@@ -1,36 +1,41 @@
 from uuid import uuid4
+import dbm
+import json
 
 
-DATABASE = {}  # a dict for now, figure out a key value db later ;)
+DATABASE = dbm.open('/tmp/dbm', 'c')
 
 
 def create(todo, host=''):
     todo = dict(todo)
     todo.setdefault('completed', False)
     todo.setdefault('url', host + uuid4().hex)
-    DATABASE[todo['url']] = todo
+    update(todo)
     return todo
 
 
 def get_by_url(url):
-    return DATABASE.get(url, None)
+    return json.loads(DATABASE.get(url, '').decode())
 
 
 def get_all():
-    return list(DATABASE.values())
+    return [get_by_url(url) for url in DATABASE.keys()]
 
 
 def delete(url=None):
     if not url:
-        DATABASE.clear()
+        for url in DATABASE.keys():
+            del DATABASE[url]
     else:
         del DATABASE[url]
 
 
 def update(todo):
-    DATABASE[todo['url']] = dict(todo)
+    DATABASE[todo['url']] = json.dumps(dict(todo))
 
 
 def patch(url, changes):
-    DATABASE[url].update(changes)
-    return DATABASE[url]
+    todo = get_by_url(url)
+    todo.update(changes)
+    update(todo)
+    return get_by_url(url)

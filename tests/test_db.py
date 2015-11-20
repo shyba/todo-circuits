@@ -6,7 +6,8 @@ class DatabaseOperationsTestCase(unittest.TestCase):
 
     def setUp(self):
         self.db = db
-        self.db.DATABASE = {}  # reset it
+        for url in self.db.DATABASE.keys():
+            del self.db.DATABASE[url]
         self.example_todo = {'title': 'make all tests go green'}
 
     def test_create_as_not_completed_and_valid_url(self):
