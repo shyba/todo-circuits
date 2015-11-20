@@ -22,3 +22,12 @@ def get_all():
 
 def delete_all():
     DATABASE.clear()
+
+
+def update(todo):
+    DATABASE[todo['url']] = dict(todo)
+
+
+def patch(url, changes):
+    DATABASE[url].update(changes)
+    return DATABASE[url]

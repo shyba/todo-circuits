@@ -32,6 +32,34 @@ class DatabaseOperationsTestCase(unittest.TestCase):
         # then
         self.assertEqual(persisted_todo, todo)
 
+    def test_update_by_url(self):
+        # given
+        persisted_todo = self.db.create(self.example_todo)
+
+        # when
+        persisted_todo['completed'] = True
+        persisted_todo['title'] = 'celebrate green tests'
+        self.db.update(persisted_todo)
+
+        # then
+        todo = self.db.get_by_url(persisted_todo['url'])
+        self.assertEqual(persisted_todo, todo)
+
+    def test_patch_by_url(self):
+        # given
+        persisted_todo = self.db.create(self.example_todo)
+
+        # when
+        patch = {}
+        patch['completed'] = True
+        patch['title'] = 'celebrate green tests'
+        self.db.patch(persisted_todo['url'], patch)
+
+        # then
+        todo = self.db.get_by_url(persisted_todo['url'])
+        self.assertEqual(patch['title'], todo['title'])
+        self.assertEqual(patch['completed'], todo['completed'])
+
     def test_recover_all(self):
         # given
         persisted_todo1 = self.db.create(self.example_todo)

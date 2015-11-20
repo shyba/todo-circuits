@@ -5,7 +5,7 @@ from json import loads
 from circuits.web import Server, JSONController
 from todo import db
 
-METHODS = 'POST, HEAD, GET, OPTIONS, DELETE'
+METHODS = 'POST, HEAD, GET, OPTIONS, DELETE, PATCH'
 
 
 CORS_HEADERS = {}
@@ -48,6 +48,12 @@ class Root(JSONController):
     def POST(self):
         host = self.request.uri.relative('/').unicode()
         return db.create(self.request.body, host=host)
+
+    @cors
+    @json_parser
+    def PATCH(self, *args, **kwargs):
+        url = self.request.uri.relative('/').unicode() + args[0]
+        return db.patch(url, self.request.body)
 
     @cors
     def DELETE(self):
