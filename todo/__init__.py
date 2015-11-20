@@ -3,6 +3,7 @@
 import os
 from json import loads
 from circuits.web import Server, JSONController
+from todo import db
 
 METHODS = 'POST, HEAD, GET, OPTIONS, DELETE'
 
@@ -31,7 +32,7 @@ class Root(JSONController):
 
     @cors
     def index(self):
-        return []
+        return db.get_all()
 
     @cors
     def OPTIONS(self):
@@ -40,7 +41,7 @@ class Root(JSONController):
     @cors
     @json_parser
     def POST(self):
-        return self.request.body
+        return db.create(self.request.body)
 
 
 def run():
