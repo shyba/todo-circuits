@@ -31,17 +31,28 @@ def cors(f):
 class Root(JSONController):
 
     @cors
-    def index(self):
-        return db.get_all()
+    def index(self, *args, **kwargs):
+        if not args:
+            return db.get_all()
+        else:
+            host = self.request.uri.relative('/').unicode()
+            item = args[0]
+            return db.get_by_url(host + item)
 
     @cors
-    def OPTIONS(self):
+    def OPTIONS(self, *args, **kwargs):
         self.response.headers['Allow'] = METHODS
 
     @cors
     @json_parser
     def POST(self):
-        return db.create(self.request.body)
+        host = self.request.uri.relative('/').unicode()
+        return db.create(self.request.body, host=host)
+
+    @cors
+    def DELETE(self):
+        db.delete_all()
+        return []
 
 
 def run():
